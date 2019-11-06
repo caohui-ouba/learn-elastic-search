@@ -57,7 +57,7 @@ vm.max_map_count=655360
 
 完成上述配置后，重新登陆bash，即可成功启动elasticsearch
 
-## 三、ElasticSearch的Head插件
+## 三、ElasticSearch的Head插件，管理ES集群
 
 Head插件是一个管理ES的客户端程序，安装他之前，需要安装grunt。通常使用npm安装，所以在linux环境下，先安装npm，自行在网上查找安装方法。
 
@@ -88,6 +88,50 @@ http.cors.enabled: true
 http.cors.allow-origin: "*"
 ```
 
+- 先启动 Elastic Search
 
+- 进入elasticsearch-head下的node_modules/grunt/bin，执行`./grunt server`开启es head。默认是9100端口。
 
+- 用浏览器访问9100端口，即可以看到elasticsearch的管理界面, 如下。
 
+![es-h](https://t1.picb.cc/uploads/2019/10/13/gsy9ZT.md.png)
+
+## 四、安装ElasticSearch的图形化管理工具Kibana
+
+Kibana是Elastic Search的web界面管理工具，提供可视化的es管理界面，非常人性化。
+
+- 首先在网上下载kibana的tar包，解压
+- 修改`config/kibana.yml`中的server.host为本机的ip地址。
+- 将数组`elasticsearch-hosts`内部的localhost改为elasticsearch的ip地址+端口。
+- 首先启动elastic-search。
+- 启动kibana，./bin/kibana。
+- 浏览器访问,ip:5601, 即可访问到kibana的控制台。默认端口是5601，如下所示。
+
+![index](https://t1.picb.cc/uploads/2019/10/22/gDfA2s.md.png)
+
+## 五、ES的基本原理
+
+### 5.1. 倒排索引
+
+![index](https://t1.picb.cc/uploads/2019/11/06/gY54eD.md.png)
+
+倒排索引保存了每个单词在文档中的存在情况。如果现在有一个需求，找到所有含有单词`quick`的文档。如果是一般的写法，需要将所有文档遍历一遍。如果有倒排索引的存在，就可以直接找到含有`quick`的文档。
+
+在倒排索引中，key是每个单词，而value是含有这个单词的所有文档的序号。
+
+在elastic search中，会把倒排索引的key进行处理，比如dogs和dog其实是同一个意思，Quick和quick其实是同一个意思。
+
+### 5.2. 分词器介绍内置分词器
+
+分词器包括三部分：
+
+- character filter：分词之前的预处理，过滤掉HTML标签特殊符号等。
+- tokenizer：分词。
+- token filter：标准化。
+
+es内置分词器：
+
+- standard分词器：大写转小写，去除停用词，中文的话就是单个字分词。
+- simple分词器：过滤掉数字，以非字母字符来分割信息，然后将词汇单元转化成小写形式。
+- Whitepace分词器：仅仅根据空格分词。
+- language分词器：特定语言分词器。
