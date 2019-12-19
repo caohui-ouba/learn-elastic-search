@@ -430,7 +430,7 @@ mapping指的是每个索引的每个字段，都被映射为一种数据类型�
 
 我们可以在创建索引的时候自定义mapping。
 
-```json
+```html
 PUT lib6
 {
   "settings": {
